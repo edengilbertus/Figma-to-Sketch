@@ -1,0 +1,14 @@
+{
+  "name": "Sketch File Importer",
+  "description": "Import Sketch files directly into your Penpot project. Upload .sketch files and automatically convert them to Penpot format with all layers, styles, and assets preserved.",
+  "code": "/plugin.js",
+  "icon": "/icon.svg",
+  "permissions": [
+    "content:read",
+    "content:write",
+    "library:read",
+    "library:write",
+    "user:read",
+    "allow:downloads"
+  ]
+}

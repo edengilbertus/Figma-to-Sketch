@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penpot Sketch Importer Plugin</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        .manifest-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+        }
+        .manifest-link:hover {
+            transform: translateY(-2px);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .feature h3 {
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+        .github-link {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        .github-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Penpot Sketch Importer Plugin</h1>
+            <p class="subtitle">Import .sketch files directly into Penpot with drag & drop</p>
+            <a href="manifest.json" class="manifest-link">📄 Plugin Manifest</a>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🎨 Easy Import</h3>
+                <p>Drag and drop .sketch files directly into Penpot. No complex conversion process needed.</p>
+            </div>
+            <div class="feature">
+                <h3>🔄 Shape Conversion</h3>
+                <p>Automatically converts rectangles, ellipses, text, groups, and artboards to Penpot objects.</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Layer Hierarchy</h3>
+                <p>Preserves your original layer organization and structure from Sketch.</p>
+            </div>
+            <div class="feature">
+                <h3>🖼️ Image Support</h3>
+                <p>Extracts and handles images from your Sketch files automatically.</p>
+            </div>
+            <div class="feature">
+                <h3>🎨 Gradient Handling</h3>
+                <p>Converts gradients to compatible formats for seamless design transfer.</p>
+            </div>
+            <div class="feature">
+                <h3>📈 Progress Tracking</h3>
+                <p>Real-time progress updates and comprehensive error handling during import.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Made with ❤️ by Eden Gilbert</p>
+            <p><a href="https://github.com/edengilbertus/Figma-to-Sketch" class="github-link">View on GitHub</a></p>
+        </div>
+    </div>
+</body>
+</html>

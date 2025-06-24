@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1390" height="724" viewBox="0 0 1390 724" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="coverBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="panelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1390" height="724" fill="url(#coverBg)"/>
+  
+  <!-- Main Title -->
+  <text x="695" y="80" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="42" font-weight="bold">
+    Penpot Sketch Importer Plugin
+  </text>
+  <text x="695" y="120" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="24">
+    Import .sketch files directly into Penpot with drag &amp; drop
+  </text>
+  
+  <!-- Plugin Interface Panel -->
+  <g transform="translate(345, 180)">
+    <!-- Panel Background -->
+    <rect width="700" height="400" rx="20" fill="url(#panelGradient)" stroke="#e2e8f0" stroke-width="2"/>
+    
+    <!-- Header -->
+    <rect width="700" height="60" rx="20" fill="url(#accentGradient)"/>
+    <rect width="700" height="40" fill="url(#accentGradient)"/>
+    
+    <!-- Header Text -->
+    <text x="30" y="35" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="bold">
+      Sketch File Importer
+    </text>
+    
+    <!-- Drag and Drop Area -->
+    <g transform="translate(50, 100)">
+      <rect width="600" height="250" rx="15" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3" stroke-dasharray="10,5"/>
+      
+      <!-- Upload Icon -->
+      <g transform="translate(300, 125)">
+        <!-- Cloud Icon -->
+        <path d="M-40,0 C-40,-20 -20,-40 0,-40 C20,-40 40,-20 40,0 C50,0 60,10 60,20 C60,30 50,40 40,40 L-40,40 C-50,40 -60,30 -60,20 C-60,10 -50,0 -40,0 Z" fill="#6366f1"/>
+        <!-- Arrow -->
+        <path d="M-10,-10 L10,-10 L10,-20 L25,0 L10,20 L10,10 L-10,10 Z" fill="white"/>
+      </g>
+      
+      <!-- Text -->
+      <text x="300" y="200" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="18" font-weight="600">
+        Drop your .sketch file here
+      </text>
+      <text x="300" y="225" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="14">
+        or click to browse files
+      </text>
+    </g>
+  </g>
+  
+  <!-- Sketch File Icon (left side) -->
+  <g transform="translate(150, 250)">
+    <rect width="120" height="150" rx="15" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+    <polygon points="100,0 100,25 125,25" fill="#fbbf24"/>
+    <g transform="translate(60, 60)">
+      <polygon points="0,-20 20,0 0,20 -20,0" fill="#fbbf24"/>
+    </g>
+    <text x="60" y="120" text-anchor="middle" fill="#64748b" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+      design.sketch
+    </text>
+  </g>
+  
+  <!-- Arrow -->
+  <g transform="translate(300, 325)">
+    <path d="M0,-5 L30,-5 L30,-15 L50,0 L30,15 L30,5 L0,5 Z" fill="#6366f1"/>
+  </g>
+  
+  <!-- Penpot Canvas (right side) -->
+  <g transform="translate(1100, 250)">
+    <rect width="150" height="150" rx="15" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <!-- Penpot Logo -->
+    <circle cx="75" cy="75" r="25" fill="#1d4ed8"/>
+    <text x="75" y="85" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="bold">P</text>
+    <text x="75" y="130" text-anchor="middle" fill="#94a3b8" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
+      Penpot Canvas
+    </text>
+  </g>
+  
+  <!-- Features List -->
+  <g transform="translate(100, 620)">
+    <text x="0" y="0" fill="#94a3b8" font-family="Arial, sans-serif" font-size="16" font-weight="600">
+      ✓ Drag &amp; drop interface   ✓ Shape conversion   ✓ Layer hierarchy   ✓ Image support   ✓ Progress tracking
+    </text>
+  </g>
+  
+  <!-- Decorative Elements -->
+  <circle cx="100" cy="100" r="4" fill="#6366f1" opacity="0.6"/>
+  <circle cx="1290" cy="120" r="6" fill="#8b5cf6" opacity="0.4"/>
+  <circle cx="80" cy="600" r="3" fill="#fbbf24" opacity="0.7"/>
+  <circle cx="1310" cy="650" r="5" fill="#6366f1" opacity="0.5"/>
+</svg>
