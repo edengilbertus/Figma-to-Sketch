@@ -1,0 +1,42 @@
+{
+  "name": "penpot-sketch-importer",
+  "version": "1.0.0",
+  "description": "A Penpot plugin to import Sketch files and convert them to Penpot format",
+  "main": "plugin.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "npm run build:plugin && npm run serve",
+    "build": "npm run build:plugin && npm run build:ui",
+    "build:plugin": "esbuild src/plugin.ts --bundle --outfile=public/plugin.js --target=es2020 --format=iife --minify",
+    "build:ui": "cp src/index.html public/index.html",
+    "serve": "live-server public --port=8080 --cors",
+    "watch": "npm run build:plugin -- --watch",
+    "clean": "rm -rf public/plugin.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "penpot",
+    "plugin",
+    "sketch",
+    "import",
+    "design",
+    "converter"
+  ],
+  "author": "Eden Gilbert",
+  "license": "MIT",
+  "devDependencies": {
+    "@penpot/plugin-types": "^1.0.0",
+    "@penpot/plugin-styles": "^1.0.0",
+    "esbuild": "^0.19.0",
+    "live-server": "^1.2.2",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1"
+  },
+  "files": [
+    "public/",
+    "src/",
+    "README.md"
+  ]
+} 

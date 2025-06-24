@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch File Importer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1e1e1e;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 24px;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #b3b3b3;
+            line-height: 1.4;
+        }
+
+        .upload-area {
+            flex: 1;
+            border: 2px dashed #404040;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 24px;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .upload-area:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #b3b3b3;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .progress-container {
+            display: none;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #b3b3b3;
+            text-align: center;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5856eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #333333;
+            color: #ffffff;
+            border: 1px solid #404040;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #404040;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            color: #fca5a5;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            color: #86efac;
+            font-size: 14px;
+            display: none;
+        }
+
+        .file-info {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #b3b3b3;
+        }
+
+        .processing-state {
+            display: none;
+            text-align: center;
+            padding: 32px;
+        }
+
+        .processing-icon {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #333333;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">Sketch File Importer</div>
+            <div class="subtitle">Upload your .sketch files to convert them into Penpot format. All layers, styles, and assets will be preserved.</div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="file-info" id="fileInfo">
+            <div class="file-name" id="fileName"></div>
+            <div class="file-size" id="fileSize"></div>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <input type="file" class="file-input" id="fileInput" accept=".sketch" />
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <div class="upload-text">Drop your Sketch file here</div>
+            <div class="upload-subtext">or click to browse<br><span style="font-size: 12px;">Supports .sketch files up to 50MB</span></div>
+        </div>
+
+        <div class="processing-state" id="processingState">
+            <div class="processing-icon"></div>
+            <div>Processing your Sketch file...</div>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Preparing import...</div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" id="importBtn" disabled>Import to Penpot</button>
+            <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        class SketchImporter {
+            constructor() {
+                this.selectedFile = null;
+                this.sketchData = null;
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                const uploadArea = document.getElementById('uploadArea');
+                const fileInput = document.getElementById('fileInput');
+                const importBtn = document.getElementById('importBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+
+                // File upload events
+                uploadArea.addEventListener('click', () => fileInput.click());
+                uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
+                uploadArea.addEventListener('dragleave', this.handleDragLeave.bind(this));
+                uploadArea.addEventListener('drop', this.handleDrop.bind(this));
+                fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+
+                // Button events
+                importBtn.addEventListener('click', this.importToProject.bind(this));
+                cancelBtn.addEventListener('click', this.closePlugin.bind(this));
+
+                // Listen for messages from plugin
+                window.addEventListener('message', this.handlePluginMessage.bind(this));
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                document.getElementById('uploadArea').classList.add('dragover');
+            }
+
+            handleDragLeave(e) {
+                e.preventDefault();
+                document.getElementById('uploadArea').classList.remove('dragover');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                document.getElementById('uploadArea').classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            }
+
+            handleFileSelect(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            }
+
+            async processFile(file) {
+                if (!file.name.endsWith('.sketch')) {
+                    this.showError('Please select a valid .sketch file.');
+                    return;
+                }
+
+                if (file.size > 50 * 1024 * 1024) { // 50MB limit
+                    this.showError('File size must be less than 50MB.');
+                    return;
+                }
+
+                this.selectedFile = file;
+                this.showFileInfo(file);
+                this.hideError();
+
+                try {
+                    document.getElementById('processingState').style.display = 'block';
+                    document.getElementById('uploadArea').style.display = 'none';
+                    
+                    this.sketchData = await this.parseSketchFile(file);
+                    
+                    document.getElementById('processingState').style.display = 'none';
+                    document.getElementById('importBtn').disabled = false;
+                    
+                    const imageCount = Object.keys(this.sketchData.images || {}).length;
+                    this.showSuccess(`Sketch file parsed successfully! Found ${this.sketchData.pages?.length || 0} pages, ${this.sketchData.symbols?.length || 0} symbols, and ${imageCount} images.`);
+                    
+                } catch (error) {
+                    console.error('Error parsing Sketch file:', error);
+                    document.getElementById('processingState').style.display = 'none';
+                    document.getElementById('uploadArea').style.display = 'flex';
+                    this.showError('Failed to parse Sketch file. Please ensure it\'s a valid .sketch file.');
+                }
+            }
+
+            async parseSketchFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const arrayBuffer = e.target.result;
+                            const zip = await JSZip.loadAsync(arrayBuffer);
+                            
+                            // Debug: List all files in the ZIP
+                            console.log('📦 ZIP file contents:');
+                            zip.forEach((relativePath, file) => {
+                                console.log(`  📄 ${relativePath} (${file.dir ? 'directory' : 'file'})`);
+                            });
+                            
+                            // Parse the main document
+                            const documentFile = zip.file('document.json');
+                            if (!documentFile) {
+                                throw new Error('Invalid Sketch file: missing document.json');
+                            }
+                            
+                            const documentContent = await documentFile.async('text');
+                            const document = JSON.parse(documentContent);
+                            
+                            console.log('📄 Document structure:', {
+                                pages: document.pages,
+                                pageCount: document.pages?.length || 0,
+                                hasPages: !!document.pages
+                            });
+                            
+                            // Parse pages
+                            const pages = [];
+                            if (document.pages && document.pages.length > 0) {
+                                console.log(`🔍 Found ${document.pages.length} page references in document`);
+                                
+                                for (let i = 0; i < document.pages.length; i++) {
+                                    const pageRef = document.pages[i];
+                                    console.log(`📋 Processing page reference ${i}:`, pageRef);
+                                    
+                                    const pageId = pageRef._ref || pageRef.ref || pageRef.id;
+                                    if (!pageId) {
+                                        console.warn('⚠️ Page reference missing ID:', pageRef);
+                                        continue;
+                                    }
+                                    
+                                    const pageFile = zip.file(`pages/${pageId}.json`);
+                                    if (pageFile) {
+                                        console.log(`✅ Found page file: pages/${pageId}.json`);
+                                        const pageContent = await pageFile.async('text');
+                                        const page = JSON.parse(pageContent);
+                                        console.log(`📑 Page parsed:`, {
+                                            name: page.name,
+                                            layerCount: page.layers?.length || 0,
+                                            hasLayers: !!page.layers
+                                        });
+                                        pages.push(page);
+                                    } else {
+                                        console.warn(`❌ Page file not found: pages/${pageId}.json`);
+                                    }
+                                }
+                            } else {
+                                console.warn('⚠️ No pages found in document or document.pages is empty');
+                                
+                                // Try alternative: look for any .json files in pages/ directory
+                                console.log('🔍 Searching for pages manually...');
+                                const pageFiles = zip.filter((relativePath, file) => {
+                                    return relativePath.startsWith('pages/') && relativePath.endsWith('.json') && !file.dir;
+                                });
+                                
+                                if (pageFiles.length > 0) {
+                                    console.log(`📄 Found ${pageFiles.length} page files manually:`, pageFiles.map(f => f.name));
+                                    for (const pageFile of pageFiles) {
+                                        try {
+                                            const pageContent = await pageFile.async('text');
+                                            const page = JSON.parse(pageContent);
+                                            console.log(`📑 Manual page parsed: ${pageFile.name}`, {
+                                                name: page.name,
+                                                layerCount: page.layers?.length || 0
+                                            });
+                                            pages.push(page);
+                                        } catch (pageError) {
+                                            console.warn(`❌ Failed to parse page ${pageFile.name}:`, pageError);
+                                        }
+                                    }
+                                } else {
+                                    console.warn('❌ No page files found even manually');
+                                }
+                            }
+                            
+                            // Parse symbols if they exist
+                            const symbols = [];
+                            const symbolsFile = zip.file('symbols.json');
+                            if (symbolsFile) {
+                                const symbolsContent = await symbolsFile.async('text');
+                                const symbolsData = JSON.parse(symbolsContent);
+                                symbols.push(...symbolsData.symbols || []);
+                            }
+
+                            // Extract images from the ZIP
+                            const images = {};
+                            const imageFiles = zip.filter((relativePath, file) => {
+                                return relativePath.startsWith('images/') && !file.dir;
+                            });
+
+                            for (const imageFile of imageFiles) {
+                                try {
+                                    const imageData = await imageFile.async('blob');
+                                    const imageId = imageFile.name.split('/').pop().split('.')[0];
+                                    
+                                    // Convert to data URL for easier handling
+                                    const dataUrl = await this.blobToDataUrl(imageData);
+                                    images[imageId] = {
+                                        name: imageFile.name,
+                                        dataUrl: dataUrl,
+                                        size: imageData.size,
+                                        type: imageData.type
+                                    };
+                                } catch (imageError) {
+                                    console.warn('Failed to extract image:', imageFile.name, imageError);
+                                }
+                            }
+
+                            console.log(`Extracted ${Object.keys(images).length} images from Sketch file`);
+                            
+                            resolve({
+                                document,
+                                pages,
+                                symbols,
+                                images,
+                                meta: document.meta || {}
+                            });
+                            
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+
+            blobToDataUrl(blob) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
+
+            showFileInfo(file) {
+                const fileInfo = document.getElementById('fileInfo');
+                const fileName = document.getElementById('fileName');
+                const fileSize = document.getElementById('fileSize');
+                
+                fileName.textContent = file.name;
+                fileSize.textContent = this.formatFileSize(file.size);
+                fileInfo.style.display = 'block';
+                fileInfo.classList.add('fade-in');
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showError(message) {
+                const errorEl = document.getElementById('errorMessage');
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                errorEl.classList.add('fade-in');
+            }
+
+            hideError() {
+                document.getElementById('errorMessage').style.display = 'none';
+            }
+
+            showSuccess(message) {
+                const successEl = document.getElementById('successMessage');
+                successEl.textContent = message;
+                successEl.style.display = 'block';
+                successEl.classList.add('fade-in');
+            }
+
+            hideSuccess() {
+                document.getElementById('successMessage').style.display = 'none';
+            }
+
+            async importToProject() {
+                if (!this.sketchData) {
+                    this.showError('No Sketch data to import. Please select a file first.');
+                    return;
+                }
+
+                try {
+                    document.getElementById('importBtn').disabled = true;
+                    document.getElementById('progressContainer').style.display = 'block';
+                    this.hideError();
+                    this.hideSuccess();
+
+                    // Send data to plugin for processing
+                    parent.postMessage({
+                        type: 'process-sketch-data',
+                        data: this.sketchData
+                    }, '*');
+
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.showError('Failed to start import process.');
+                    document.getElementById('importBtn').disabled = false;
+                    document.getElementById('progressContainer').style.display = 'none';
+                }
+            }
+
+            handlePluginMessage(event) {
+                const message = event.data;
+                
+                switch (message.type) {
+                    case 'import-progress':
+                        this.updateProgress(message.data.progress, message.data.message);
+                        break;
+                    case 'import-complete':
+                        this.handleImportComplete(message.data);
+                        break;
+                    case 'import-error':
+                        this.handleImportError(message.data);
+                        break;
+                    case 'current-page-info':
+                        console.log('Current page:', message.data);
+                        break;
+                }
+            }
+
+            updateProgress(progress, message) {
+                const progressFill = document.getElementById('progressFill');
+                const progressText = document.getElementById('progressText');
+                
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = message || `${progress}% complete`;
+            }
+
+            handleImportComplete(data) {
+                if (data.success) {
+                    this.showSuccess('Import completed successfully! Your Sketch file has been converted to Penpot format.');
+                    document.getElementById('progressContainer').style.display = 'none';
+                    document.getElementById('importBtn').textContent = 'Import Another File';
+                    document.getElementById('importBtn').disabled = false;
+                    
+                    // Reset for next import
+                    setTimeout(() => {
+                        this.resetInterface();
+                    }, 3000);
+                } else {
+                    this.handleImportError({ error: 'Import completed but with errors.' });
+                }
+            }
+
+            handleImportError(data) {
+                this.showError(`Import failed: ${data.error}`);
+                document.getElementById('progressContainer').style.display = 'none';
+                document.getElementById('importBtn').disabled = false;
+            }
+
+            resetInterface() {
+                this.selectedFile = null;
+                this.sketchData = null;
+                
+                document.getElementById('fileInfo').style.display = 'none';
+                document.getElementById('processingState').style.display = 'none';
+                document.getElementById('progressContainer').style.display = 'none';
+                document.getElementById('uploadArea').style.display = 'flex';
+                document.getElementById('importBtn').disabled = true;
+                document.getElementById('importBtn').textContent = 'Import to Penpot';
+                document.getElementById('fileInput').value = '';
+                
+                this.hideError();
+                this.hideSuccess();
+            }
+
+            closePlugin() {
+                parent.postMessage({
+                    type: 'close-plugin'
+                }, '*');
+            }
+        }
+
+        // Initialize the importer when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SketchImporter();
+        });
+
+        // Request current page info on load
+        window.addEventListener('load', () => {
+            parent.postMessage({
+                type: 'get-current-page'
+            }, '*');
+        });
+    </script>
+</body>
+</html> 
